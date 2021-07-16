@@ -62,6 +62,14 @@ class RadioServices;
 class MoodbarController;
 class MoodbarLoader;
 #endif
+#ifdef HAVE_PODCASTS
+class PodcastBackend;
+class GPodderSync;
+class PodcastDownloader;
+class PodcastUpdater;
+class PodcastDeleter;
+#endif
+
 
 class Application : public QObject {
   Q_OBJECT
@@ -100,6 +108,13 @@ class Application : public QObject {
 #ifdef HAVE_MOODBAR
   MoodbarController *moodbar_controller() const;
   MoodbarLoader *moodbar_loader() const;
+#endif
+#ifdef HAVE_PODCASTS
+  PodcastBackend *podcast_backend() const;
+  GPodderSync *gpodder_sync() const;
+  PodcastDownloader *podcast_downloader() const;
+  PodcastUpdater *podcast_updater() const;
+  PodcastDeleter *podcast_deleter() const;
 #endif
 
   LastFMImport *lastfm_import() const;
