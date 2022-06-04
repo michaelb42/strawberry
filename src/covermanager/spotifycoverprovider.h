@@ -35,11 +35,11 @@
 #include <QTimer>
 
 #include "jsoncoverprovider.h"
+#include "spotify/spotifyservice.h"
 
 class QNetworkReply;
 class Application;
 class NetworkAccessManager;
-class LocalRedirectServer;
 
 class SpotifyCoverProvider : public JsonCoverProvider {
   Q_OBJECT
@@ -51,24 +51,20 @@ class SpotifyCoverProvider : public JsonCoverProvider {
   bool StartSearch(const QString &artist, const QString &album, const QString &title, const int id) override;
   void CancelSearch(const int id) override;
 
-  void Authenticate() override;
-  void Deauthenticate() override;
-  bool IsAuthenticated() const override { return !access_token_.isEmpty(); }
+  bool IsAuthenticated() const override { return service_ && service_->authenticated(); }
+  void Deauthenticate() override {
+    if (service_) service_->Deauthenticate();
+  }
 
  private slots:
-  void HandleLoginSSLErrors(const QList<QSslError> &ssl_errors);
-  void RedirectArrived();
-  void AccessTokenRequestFinished(QNetworkReply *reply);
   void HandleSearchReply(QNetworkReply *reply, const int id, const QString &extract);
-  void RequestNewAccessToken() { RequestAccessToken(); }
 
  private:
   QByteArray GetReplyData(QNetworkReply *reply);
-  void AuthError(const QString &error = QString(), const QVariant &debug = QVariant());
   void Error(const QString &error, const QVariant &debug = QVariant()) override;
-  void RequestAccessToken(const QString &code = QString(), const QUrl &redirect_url = QUrl());
 
  private:
+<<<<<<< HEAD
   static const char *kSettingsGroup;
   static const char *kClientIDB64;
   static const char *kClientSecretB64;
@@ -78,15 +74,7 @@ class SpotifyCoverProvider : public JsonCoverProvider {
   static const char *kApiUrl;
   static const int kLimit;
 
-  LocalRedirectServer *server_;
-  QStringList login_errors_;
-  QString code_verifier_;
-  QString code_challenge_;
-  QString access_token_;
-  QString refresh_token_;
-  quint64 expires_in_;
-  quint64 login_time_;
-  QTimer refresh_login_timer_;
+  SpotifyService *service_;
   QList<QNetworkReply*> replies_;
 
 };

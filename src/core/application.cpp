@@ -54,7 +54,6 @@
 #include "covermanager/musicbrainzcoverprovider.h"
 #include "covermanager/deezercoverprovider.h"
 #include "covermanager/musixmatchcoverprovider.h"
-#include "covermanager/spotifycoverprovider.h"
 
 #include "lyrics/lyricsproviders.h"
 #include "lyrics/auddlyricsprovider.h"
@@ -77,6 +76,11 @@
 #ifdef HAVE_TIDAL
 #  include "tidal/tidalservice.h"
 #  include "covermanager/tidalcoverprovider.h"
+#endif
+
+#ifdef HAVE_SPOTIFY
+#  include "spotify/spotifyservice.h"
+#  include "covermanager/spotifycoverprovider.h"
 #endif
 
 #ifdef HAVE_QOBUZ
@@ -130,9 +134,11 @@ class ApplicationImpl {
           cover_providers->AddProvider(new DiscogsCoverProvider(app, cover_providers->network(), app));
           cover_providers->AddProvider(new DeezerCoverProvider(app, cover_providers->network(), app));
           cover_providers->AddProvider(new MusixmatchCoverProvider(app, cover_providers->network(), app));
-          cover_providers->AddProvider(new SpotifyCoverProvider(app, cover_providers->network(), app));
 #ifdef HAVE_TIDAL
           cover_providers->AddProvider(new TidalCoverProvider(app, cover_providers->network(), app));
+#endif
+#ifdef HAVE_SPOTIFY
+          cover_providers->AddProvider(new SpotifyCoverProvider(app, cover_providers->network(), app));
 #endif
 #ifdef HAVE_QOBUZ
           cover_providers->AddProvider(new QobuzCoverProvider(app, cover_providers->network(), app));
@@ -166,6 +172,9 @@ class ApplicationImpl {
 #endif
 #ifdef HAVE_TIDAL
           internet_services->AddService(new TidalService(app, internet_services));
+#endif
+#ifdef HAVE_SPOTIFY
+          internet_services->AddService(new SpotifyService(app, internet_services));
 #endif
 #ifdef HAVE_QOBUZ
           internet_services->AddService(new QobuzService(app, internet_services));

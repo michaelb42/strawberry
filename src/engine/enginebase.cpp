@@ -37,6 +37,9 @@
 #include "enginebase.h"
 #include "settings/backendsettingspage.h"
 #include "settings/networkproxysettingspage.h"
+#ifdef HAVE_SPOTIFY
+#  include "settings/spotifysettingspage.h"
+#endif
 
 Engine::Base::Base(const EngineType type, QObject *parent)
     : QObject(parent),
@@ -185,6 +188,15 @@ void Engine::Base::ReloadSettings() {
 
   s.endGroup();
 
+#ifdef HAVE_SPOTIFY
+  s.beginGroup(SpotifySettingsPage::kSettingsGroup);
+  spotify_username_ = s.value("username").toString();
+  QByteArray password = s.value("password").toByteArray();
+  if (password.isEmpty()) spotify_password_.clear();
+  else spotify_password_ = QString::fromUtf8(QByteArray::fromBase64(password));
+  s.endGroup();
+#endif
+
 }
 
 void Engine::Base::EmitAboutToEnd() {
@@ -195,6 +207,7 @@ void Engine::Base::EmitAboutToEnd() {
 
   about_to_end_emitted_ = true;
   emit TrackAboutToEnd();
+
 }
 
 bool Engine::Base::ValidOutput(const QString &output) {

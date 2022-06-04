@@ -186,6 +186,7 @@ QString AlbumCoverLoader::CoverFilenameFromSource(const Song::Source source, con
       }
       [[fallthrough]];
     case Song::Source::Subsonic:
+    case Song::Source::Spotify:
     case Song::Source::Qobuz:
       if (!album_id.isEmpty()) {
         filename = album_id;
